@@ -1,0 +1,67 @@
+
+# ==============================
+# Dataset
+# ==============================
+Dataset/
+dataset/
+
+# ==============================
+# Python
+# ==============================
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ==============================
+# Virtual environments
+# ==============================
+.venv/
+venv/
+env/
+
+# ==============================
+# Jupyter
+# ==============================
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# ==============================
+# Model artifacts
+# ==============================
+artifacts/*
+!artifacts/.gitkeep
+
+notebooks/artifacts/
+*.pth
+*.pt
+*.onnx
+
+# ==============================
+# Reports
+# ==============================
+reports/*
+!reports/.gitkeep
+
+# ==============================
+# Temporary files and logs
+# ==============================
+temp_file.jpg
+*.log
+*.tmp
+
+# ==============================
+# Environment variables and secrets
+# ==============================
+.env
+.env.*
+!.env.example
+
+# ==============================
+# Editor and operating system
+# ==============================
+.vscode/
+.DS_Store
+Thumbs.db
