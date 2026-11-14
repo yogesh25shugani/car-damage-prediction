@@ -143,10 +143,11 @@ st.markdown("""
 [data-testid="stMainBlockContainer"] {
     max-width: 1400px !important;
     width: 100%;
-    padding-top: 2rem;
+    padding-top: 5rem !important;
     padding-bottom: 3rem;
     padding-left: 3rem;
     padding-right: 3rem;
+    overflow: visible !important;
 }
 
 h1, h2, h3 {
@@ -161,10 +162,16 @@ h1, h2, h3 {
 }
 
 .top-label {
-    color: #2563EB;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #2563EB !important;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 2px;
+    line-height: 1.5;
+    margin-top: 0;
+    margin-bottom: 8px;
 }
 
 .section-heading {
