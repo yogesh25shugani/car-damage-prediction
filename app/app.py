@@ -22,12 +22,92 @@ from src.car_damage.predict import (
     predict_image
 )
 
-CHECKPOINT_PATH = (
+
+# --------------------------------------------------
+# Model checkpoint configuration
+# --------------------------------------------------
+
+import requests
+
+LOCAL_CHECKPOINT_PATH = (
     PROJECT_ROOT
     / "notebooks"
     / "artifacts"
     / "best_model_exp2.pth"
 )
+
+CLOUD_CHECKPOINT_PATH = (
+    PROJECT_ROOT
+    / "artifacts"
+    / "best_model_exp2.pth"
+)
+
+CHECKPOINT_URL = (
+    "https://github.com/yogesh25shugani/"
+    "car-damage-prediction/releases/download/"
+    "v1.0.0/best_model_exp2.pth"
+)
+
+
+def get_checkpoint_path():
+
+    # Use the existing local checkpoint during development
+    if LOCAL_CHECKPOINT_PATH.exists():
+        return LOCAL_CHECKPOINT_PATH
+
+    # Create the artifacts directory if it doesn't exist
+    CLOUD_CHECKPOINT_PATH.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    # Reuse an already downloaded checkpoint
+    if CLOUD_CHECKPOINT_PATH.exists():
+        return CLOUD_CHECKPOINT_PATH
+
+    # Download checkpoint from GitHub Releases
+    temp_path = CLOUD_CHECKPOINT_PATH.with_name(
+        "best_model_exp2.pth.part"
+    )
+
+    try:
+        with requests.get(
+            CHECKPOINT_URL,
+            stream=True,
+            timeout=(15, 300)
+        ) as response:
+
+            response.raise_for_status()
+
+            total_bytes = 0
+
+            with open(temp_path, "wb") as file:
+
+                for chunk in response.iter_content(
+                    chunk_size=1024 * 1024
+                ):
+
+                    if chunk:
+                        file.write(chunk)
+                        total_bytes += len(chunk)
+
+        # Basic validation against an error page or empty response
+        if total_bytes < 1_000_000:
+            raise ValueError(
+                "Downloaded checkpoint appears invalid."
+            )
+
+        # Move the completed download into its final location
+        temp_path.replace(CLOUD_CHECKPOINT_PATH)
+
+        return CLOUD_CHECKPOINT_PATH
+
+    except Exception:
+        if temp_path.exists():
+            temp_path.unlink()
+
+        raise
+
 
 CLASS_DESCRIPTIONS = {
     "F_Breakage": "Front-side structural or component breakage",
@@ -161,14 +241,18 @@ hr {
 # 4. Load trained model
 # --------------------------------------------------
 
+
 @st.cache_resource(show_spinner="Loading trained model...")
 def load_model():
 
+    checkpoint_path = get_checkpoint_path()
+
     model, device = load_trained_model(
-        checkpoint_path=CHECKPOINT_PATH
+        checkpoint_path=checkpoint_path
     )
 
     return model, device
+
 
 
 # --------------------------------------------------
